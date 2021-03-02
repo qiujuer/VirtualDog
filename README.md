@@ -14,8 +14,9 @@ It's a dog adoption app, for the #AndroidDevChallenge of Jetpack Compose.
 
 
 ## :bulb: Motivation and Context
-<!--- Optionally point readers to interesting parts of your submission. -->
-<!--- What are you especially proud of? -->
+- This is a complete interactive program prototype.
+- It has complete function module.
+- There is also a very beautiful UI design.
 
 
 ## :camera_flash: Screenshots
