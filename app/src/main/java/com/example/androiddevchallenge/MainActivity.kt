@@ -19,9 +19,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -40,19 +54,26 @@ import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.bean.DogModel
 import com.example.androiddevchallenge.bean.ModelFactory
 import com.example.androiddevchallenge.bean.VarietyModel
-import com.example.androiddevchallenge.ui.theme.*
+import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.theme.TextPrice
+import com.example.androiddevchallenge.ui.theme.TextPrimary
+import com.example.androiddevchallenge.ui.theme.TextPrimaryLight
+import com.example.androiddevchallenge.ui.theme.TextSecondary
+import com.example.androiddevchallenge.ui.theme.typography
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp(function = object : Function1<DogModel, Void?> {
-                    override fun invoke(p: DogModel): Void? {
-                        jump(p)
-                        return null
+                MyApp(
+                    function = object : Function1<DogModel, Void?> {
+                        override fun invoke(p: DogModel): Void? {
+                            jump(p)
+                            return null
+                        }
                     }
-                })
+                )
             }
         }
     }
@@ -71,7 +92,6 @@ fun MyApp(function: Function1<DogModel, Void?>) {
         MainRoot(function)
     }
 }
-
 
 @Composable
 fun MainRoot(function: Function1<DogModel, Void?>) {
@@ -191,7 +211,6 @@ fun MainVarietyItemView(img: Int, text: String) {
         )
     }
 }
-
 
 @Composable
 fun MainHottestItemView(img: Int, text: String, isLiked: Boolean) {
