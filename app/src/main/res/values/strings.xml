@@ -10,4 +10,5 @@
       the License.
       -->
     <string name="app_name">AndroidDevChallenge</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

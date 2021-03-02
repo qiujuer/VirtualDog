@@ -15,47 +15,284 @@
  */
 package com.example.androiddevchallenge
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.androiddevchallenge.ui.theme.MyTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.bean.DogModel
+import com.example.androiddevchallenge.bean.ModelFactory
+import com.example.androiddevchallenge.bean.VarietyModel
+import com.example.androiddevchallenge.ui.theme.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(function = object : Function1<DogModel, Void?> {
+                    override fun invoke(p: DogModel): Void? {
+                        jump(p)
+                        return null
+                    }
+                })
             }
         }
+    }
+
+    private fun jump(model: DogModel) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.KEY, model.id)
+        startActivity(intent)
     }
 }
 
 // Start building your app here!
 @Composable
-fun MyApp() {
+fun MyApp(function: Function1<DogModel, Void?>) {
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        MainRoot(function)
     }
 }
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
+
 @Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
+fun MainRoot(function: Function1<DogModel, Void?>) {
+    Box {
+        Image(
+            painter = painterResource(id = R.drawable.ic_sample_banner),
+            contentDescription = "banner",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .requiredHeight(210.dp)
+        )
+        LazyColumn(
+            Modifier
+                .padding(top = 210.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(color = Color(0xFFF8F8F8))
+        ) {
+            item {
+                MainTitleView("品种")
+                MainVarietyView()
+                MainTitleView("热门")
+                MainHottestView()
+                MainTitleView("最新")
+            }
+
+            // Data
+            val models = ModelFactory.sampleNewestModels()
+            models.forEach {
+                item {
+                    MainNewestItemView(it, function)
+                    Spacer(Modifier.size(5.dp))
+                }
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            MainBottomNavView()
+        }
     }
 }
 
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
 @Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+fun MainTitleView(title: String) {
+    Text(
+        modifier = Modifier.padding(20.dp, 10.dp),
+        text = title,
+        color = TextPrimary,
+        style = typography.subtitle2
+    )
+}
+
+@Composable
+fun MainVarietyView() {
+    val models: List<VarietyModel> = ModelFactory.sampleVarietyModels()
+    Row(Modifier.horizontalScroll(rememberScrollState())) {
+        Spacer(Modifier.size(12.5.dp))
+
+        models.forEach {
+            MainVarietyItemView(it.picture, it.variety)
+        }
+
+        Spacer(Modifier.size(12.5.dp))
+    }
+}
+
+@Composable
+fun MainHottestView() {
+    val models = ModelFactory.sampleHottestModels()
+    Row(Modifier.horizontalScroll(rememberScrollState())) {
+        Spacer(Modifier.size(12.5.dp))
+
+        models.forEach {
+            MainHottestItemView(it.picture, it.title, it.isLiked)
+        }
+
+        Spacer(Modifier.size(12.5.dp))
+    }
+}
+
+@Composable
+fun MainBottomNavView() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_sample_bottom_nav),
+        contentDescription = "navigation",
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+fun MainVarietyItemView(img: Int, text: String) {
+    Column(
+        modifier = Modifier.padding(7.5.dp, 0.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = img),
+            contentDescription = text,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(60.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(color = Color(0xFFFFFFFF)),
+        )
+        Spacer(Modifier.size(5.dp))
+        Text(
+            text = text,
+            color = TextSecondary,
+            style = typography.caption
+        )
+    }
+}
+
+
+@Composable
+fun MainHottestItemView(img: Int, text: String, isLiked: Boolean) {
+    Box(
+        modifier = Modifier
+            .padding(7.5.dp, 0.dp)
+            .size(140.dp)
+            .clip(RoundedCornerShape(8.dp))
+    ) {
+        Image(
+            painter = painterResource(id = img),
+            contentDescription = text,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+        )
+        Text(
+            text = text,
+            color = TextPrimaryLight,
+            style = typography.caption,
+            modifier = Modifier
+                .padding(top = 110.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(color = Color(0x59000000))
+                .wrapContentHeight(align = Alignment.CenterVertically)
+                .padding(8.dp, 0.dp)
+        )
+        Image(
+            painter = painterResource(id = if (isLiked) R.drawable.ic_like_on else R.drawable.ic_like_off),
+            contentDescription = "like",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .padding(start = 110.dp, top = 5.dp)
+                .size(25.dp)
+        )
+    }
+}
+
+@Composable
+fun MainNewestItemView(model: DogModel, function: Function1<DogModel, Void?>) {
+    Card(
+        modifier = Modifier
+            .padding(10.dp, 0.dp)
+            .clickable { function.invoke(model) },
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+        backgroundColor = Color(color = 0xFFFFFFFF)
+    ) {
+        Row(
+            modifier = Modifier.padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = model.picture),
+                contentDescription = "picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(4.dp))
+            )
+            Spacer(Modifier.size(15.dp))
+            Column {
+                Text(
+                    text = model.title,
+                    color = TextPrimary,
+                    style = typography.body1,
+                )
+                Text(
+                    text = model.variety + " " + model.gender,
+                    color = TextSecondary,
+                    style = typography.caption
+                )
+                Text(
+                    text = "发布人: " + model.user.name,
+                    color = TextSecondary,
+                    style = typography.caption
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(if (model.isLiked) R.drawable.ic_like_on else R.drawable.ic_like_off),
+                    contentDescription = "like",
+                    contentScale = ContentScale.Fit,
+                    colorFilter = ColorFilter.tint(Color(0xFF2A2A2A)),
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(
+                    text = model.price,
+                    color = TextPrice,
+                    style = typography.h6,
+                )
+            }
+        }
     }
 }
