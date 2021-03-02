@@ -1,7 +1,21 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge.bean
 
 import com.example.androiddevchallenge.R
-
 
 object ModelFactory {
     private val mAvatarImages = arrayOf(
@@ -81,7 +95,7 @@ object ModelFactory {
         return DogModel(
             title = mTitles[0],
             descriptor = "奶狗性格特别亲人，活泼，不挑食。正在长牙，喜欢啃东西。希望找到能耐心教导的主人。\n" +
-                    "领养人要求：有耐心和责任感，能够做到耐心教导，不打不弃养。科学喂养，生病及时就医，定期打针驱虫，不因结婚生育出差搬家等原因抛弃小狗。如果实在不能养了，也请及时联系我。需要回访。",
+                "领养人要求：有耐心和责任感，能够做到耐心教导，不打不弃养。科学喂养，生病及时就医，定期打针驱虫，不因结婚生育出差搬家等原因抛弃小狗。如果实在不能养了，也请及时联系我。需要回访。",
             picture = mDogImages[0],
             variety = mVarietyTexts[0],
             age = (1..10).random().toString() + "岁",
