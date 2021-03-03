@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.bean.DogModel
 import com.example.androiddevchallenge.bean.ModelFactory
@@ -115,7 +116,7 @@ fun MainRoot(function: Function1<DogModel, Void?>) {
                 MainTitleView("品种")
                 MainVarietyView()
                 MainTitleView("热门")
-                MainHottestView()
+                MainHottestView(function)
                 MainTitleView("最新")
             }
 
@@ -164,13 +165,13 @@ fun MainVarietyView() {
 }
 
 @Composable
-fun MainHottestView() {
+fun MainHottestView(function: Function1<DogModel, Void?>) {
     val models = ModelFactory.sampleHottestModels()
     Row(Modifier.horizontalScroll(rememberScrollState())) {
         Spacer(Modifier.size(12.5.dp))
 
         models.forEach {
-            MainHottestItemView(it.picture, it.title, it.isLiked)
+            MainHottestItemView(it, function)
         }
 
         Spacer(Modifier.size(12.5.dp))
@@ -213,23 +214,24 @@ fun MainVarietyItemView(img: Int, text: String) {
 }
 
 @Composable
-fun MainHottestItemView(img: Int, text: String, isLiked: Boolean) {
+fun MainHottestItemView(model: DogModel, function: Function1<DogModel, Void?>) {
     Box(
         modifier = Modifier
             .padding(7.5.dp, 0.dp)
             .size(140.dp)
             .clip(RoundedCornerShape(8.dp))
+            .clickable { function.invoke(model) }
     ) {
         Image(
-            painter = painterResource(id = img),
-            contentDescription = text,
+            painter = painterResource(id = model.picture),
+            contentDescription = "DogPicture",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
         )
         Text(
-            text = text,
+            text = model.title,
             color = TextPrimaryLight,
             style = typography.caption,
             modifier = Modifier
@@ -241,7 +243,7 @@ fun MainHottestItemView(img: Int, text: String, isLiked: Boolean) {
                 .padding(8.dp, 0.dp)
         )
         Image(
-            painter = painterResource(id = if (isLiked) R.drawable.ic_like_on else R.drawable.ic_like_off),
+            painter = painterResource(id = if (model.isLiked) R.drawable.ic_like_on else R.drawable.ic_like_off),
             contentDescription = "like",
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -256,6 +258,7 @@ fun MainNewestItemView(model: DogModel, function: Function1<DogModel, Void?>) {
     Card(
         modifier = Modifier
             .padding(10.dp, 0.dp)
+            .clip(RoundedCornerShape(8.dp))
             .clickable { function.invoke(model) },
         shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
@@ -305,7 +308,7 @@ fun MainNewestItemView(model: DogModel, function: Function1<DogModel, Void?>) {
                         .size(25.dp)
                         .clip(CircleShape)
                 )
-                Spacer(modifier = Modifier.size(5.dp))
+                Spacer(modifier = Modifier.size(10.dp))
                 Text(
                     text = model.price,
                     color = TextPrice,
@@ -314,4 +317,17 @@ fun MainNewestItemView(model: DogModel, function: Function1<DogModel, Void?>) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewMainNewestItemView() {
+    MainNewestItemView(
+        ModelFactory.sampleDogModel(),
+        object : Function1<DogModel, Void?> {
+            override fun invoke(p: DogModel): Void? {
+                return null
+            }
+        }
+    )
 }

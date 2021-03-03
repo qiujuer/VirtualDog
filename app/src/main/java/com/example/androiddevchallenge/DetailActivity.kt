@@ -20,6 +20,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,21 +77,23 @@ class DetailActivity : AppCompatActivity() {
 
         setContent {
             MyTheme {
-                MyAppForDetail(model)
+                MyAppForDetail(model) {
+                    finish()
+                }
             }
         }
     }
 }
 
 @Composable
-fun MyAppForDetail(model: DogModel) {
+fun MyAppForDetail(model: DogModel, onBackClick: () -> Unit) {
     Surface(color = MaterialTheme.colors.background) {
-        DetailRoot(model)
+        DetailRoot(model, onBackClick)
     }
 }
 
 @Composable
-fun DetailRoot(model: DogModel) {
+fun DetailRoot(model: DogModel, onBackClick: () -> Unit) {
     Box {
         Image(
             painter = painterResource(id = model.picture),
@@ -146,19 +149,21 @@ fun DetailRoot(model: DogModel) {
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            DetailNavigationView()
+            DetailNavigationView(onBackClick)
         }
     }
 }
 
-@Preview
 @Composable
-fun DetailNavigationView() {
+fun DetailNavigationView(onClick: () -> Unit) {
     Image(
         painter = painterResource(R.drawable.ic_icon_back),
         contentDescription = "back",
         contentScale = ContentScale.Fit,
-        modifier = Modifier.size(55.dp)
+        modifier = Modifier
+            .size(55.dp)
+            .clip(CircleShape)
+            .clickable { onClick.invoke() }
     )
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -301,4 +306,10 @@ fun DetailBottomOptionView() {
                 .wrapContentWidth(align = Alignment.CenterHorizontally)
         )
     }
+}
+
+@Preview
+@Composable
+fun PreviewDetailOwnerUserCard() {
+    DetailOwnerUserCard(ModelFactory.sampleDogModel())
 }
